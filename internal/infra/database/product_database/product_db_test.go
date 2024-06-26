@@ -6,16 +6,16 @@ import (
 	"testing"
 
 	"github.com/ViniciusSouzaDosReis/product-api/internal/entity/product"
+	"github.com/ViniciusSouzaDosReis/product-api/internal/infra/database/utils"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
 
-func TestCreateProduct(t *testing.T) {
-	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
-	assert.Equal(t, nil, err)
-	db.AutoMigrate(&product.Product{})
+var sqliteDialecto = sqlite.Open("file::memory:")
 
+func TestCreateProduct(t *testing.T) {
+	db, err := utils.CreateDBConnection(sqliteDialecto, &product.Product{})
+	assert.NoError(t, err)
 	newProduct, _ := product.NewProduct("Product 1", 10.0)
 	productDB := NewProduct(db)
 
@@ -31,9 +31,8 @@ func TestCreateProduct(t *testing.T) {
 }
 
 func TestFindAll(t *testing.T) {
-	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
-	assert.Equal(t, nil, err)
-	db.AutoMigrate(&product.Product{})
+	db, err := utils.CreateDBConnection(sqliteDialecto, &product.Product{})
+	assert.NoError(t, err)
 
 	for i := 0; i < 24; i++ {
 		newProduct, err := product.NewProduct(fmt.Sprintf("Product %d", i), rand.Float64()*100)
@@ -56,9 +55,8 @@ func TestFindAll(t *testing.T) {
 }
 
 func TestFindById(t *testing.T) {
-	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
-	assert.Equal(t, nil, err)
-	db.AutoMigrate(&product.Product{})
+	db, err := utils.CreateDBConnection(sqliteDialecto, &product.Product{})
+	assert.NoError(t, err)
 
 	newProduct, _ := product.NewProduct("Product 1", 10.0)
 	db.Create(newProduct)
@@ -72,9 +70,8 @@ func TestFindById(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
-	assert.Equal(t, nil, err)
-	db.AutoMigrate(&product.Product{})
+	db, err := utils.CreateDBConnection(sqliteDialecto, &product.Product{})
+	assert.NoError(t, err)
 
 	newProduct, _ := product.NewProduct("Product 1", 10.0)
 	db.Create(newProduct)
@@ -89,9 +86,8 @@ func TestDelete(t *testing.T) {
 }
 
 func TestUpdate(t *testing.T) {
-	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
-	assert.Equal(t, nil, err)
-	db.AutoMigrate(&product.Product{})
+	db, err := utils.CreateDBConnection(sqliteDialecto, &product.Product{})
+	assert.NoError(t, err)
 
 	newProduct, _ := product.NewProduct("Product 1", 10.0)
 	db.Create(newProduct)

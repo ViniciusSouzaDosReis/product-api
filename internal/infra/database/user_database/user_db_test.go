@@ -4,15 +4,16 @@ import (
 	"testing"
 
 	"github.com/ViniciusSouzaDosReis/product-api/internal/entity/user"
+	"github.com/ViniciusSouzaDosReis/product-api/internal/infra/database/utils"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
 
+var sqliteDialecto = sqlite.Open("file::memory:")
+
 func TestCreateUser(t *testing.T) {
-	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
-	assert.Equal(t, nil, err)
-	db.AutoMigrate(&user.User{})
+	db, err := utils.CreateDBConnection(sqliteDialecto, &user.User{})
+	assert.NoError(t, err)
 
 	newUser, _ := user.NewUser("John Doe", "j@j.com", "123456")
 	userDB := NewUser(db)
@@ -31,9 +32,8 @@ func TestCreateUser(t *testing.T) {
 }
 
 func TestFindByEmail(t *testing.T) {
-	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
-	assert.Equal(t, nil, err)
-	db.AutoMigrate(&user.User{})
+	db, err := utils.CreateDBConnection(sqliteDialecto, &user.User{})
+	assert.NoError(t, err)
 
 	newUser, _ := user.NewUser("John Doe", "j@j.com", "123456")
 	userDB := NewUser(db)
