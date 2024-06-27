@@ -1,10 +1,8 @@
 package interfaces
 
-import (
-	"github.com/ViniciusSouzaDosReis/product-api/internal/entity/user"
-)
+import "github.com/ViniciusSouzaDosReis/product-api/internal/entity"
 
 type UserInterface interface {
-	Create(user *user.User) error
-	FindByEmail(email string) (*user.User, error)
+	Create(user *entity.User) error
+	FindByEmail(email string) (*entity.User, error)
 }

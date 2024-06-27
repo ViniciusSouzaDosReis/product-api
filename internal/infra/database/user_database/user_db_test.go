@@ -3,7 +3,7 @@ package user_database
 import (
 	"testing"
 
-	"github.com/ViniciusSouzaDosReis/product-api/internal/entity/user"
+	"github.com/ViniciusSouzaDosReis/product-api/internal/entity"
 	"github.com/ViniciusSouzaDosReis/product-api/internal/infra/database/utils"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/sqlite"
@@ -12,16 +12,16 @@ import (
 var sqliteDialecto = sqlite.Open("file::memory:")
 
 func TestCreateUser(t *testing.T) {
-	db, err := utils.CreateDBConnection(sqliteDialecto, &user.User{})
+	db, err := utils.CreateDBConnection(sqliteDialecto, &entity.User{})
 	assert.NoError(t, err)
 
-	newUser, _ := user.NewUser("John Doe", "j@j.com", "123456")
+	newUser, _ := entity.NewUser("John Doe", "j@j.com", "123456")
 	userDB := NewUser(db)
 
 	err = userDB.Create(*newUser)
 	assert.Equal(t, nil, err)
 
-	var userFound user.User
+	var userFound entity.User
 	err = db.First(&userFound, "id = ?", newUser.ID).Error
 	assert.Equal(t, nil, err)
 
@@ -32,10 +32,10 @@ func TestCreateUser(t *testing.T) {
 }
 
 func TestFindByEmail(t *testing.T) {
-	db, err := utils.CreateDBConnection(sqliteDialecto, &user.User{})
+	db, err := utils.CreateDBConnection(sqliteDialecto, &entity.User{})
 	assert.NoError(t, err)
 
-	newUser, _ := user.NewUser("John Doe", "j@j.com", "123456")
+	newUser, _ := entity.NewUser("John Doe", "j@j.com", "123456")
 	userDB := NewUser(db)
 
 	userDB.Create(*newUser)

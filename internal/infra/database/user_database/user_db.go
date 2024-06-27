@@ -1,7 +1,7 @@
 package user_database
 
 import (
-	"github.com/ViniciusSouzaDosReis/product-api/internal/entity/user"
+	"github.com/ViniciusSouzaDosReis/product-api/internal/entity"
 	"gorm.io/gorm"
 )
 
@@ -13,12 +13,12 @@ func NewUser(db *gorm.DB) *User {
 	return &User{DB: db}
 }
 
-func (u *User) Create(user user.User) error {
+func (u *User) Create(user entity.User) error {
 	return u.DB.Create(user).Error
 }
 
-func (u *User) FindByEmail(email string) (*user.User, error) {
-	var user user.User
+func (u *User) FindByEmail(email string) (*entity.User, error) {
+	var user entity.User
 
 	// if err := u.DB.First(&user, "email = ?", email).Error; err != nil{
 	// 	return nil, err

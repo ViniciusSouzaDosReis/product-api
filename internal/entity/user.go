@@ -1,4 +1,4 @@
-package user
+package entity
 
 import (
 	"github.com/ViniciusSouzaDosReis/product-api/pkg/entity"

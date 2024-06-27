@@ -4,8 +4,7 @@ import (
 	"net/http"
 
 	"github.com/ViniciusSouzaDosReis/product-api/configs"
-	"github.com/ViniciusSouzaDosReis/product-api/internal/entity/product"
-	"github.com/ViniciusSouzaDosReis/product-api/internal/entity/user"
+	"github.com/ViniciusSouzaDosReis/product-api/internal/entity"
 	"github.com/ViniciusSouzaDosReis/product-api/internal/infra/database/product_database"
 	"github.com/ViniciusSouzaDosReis/product-api/internal/webserver/handlers"
 	"gorm.io/driver/sqlite"
@@ -18,8 +17,8 @@ func main() {
 
 	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
 	checkErr(err)
-	db.AutoMigrate(&user.User{}, &product.Product{})
-	productHandler := handlers.NewProductHandler(product_database.NewProduct(db))
+	db.AutoMigrate(&entity.User{}, &entity.Product{})
+	productHandler := handlers.NewProductHandler(product_database.NewProductDB(db))
 
 	http.HandleFunc("POST /product", productHandler.CreateProduct)
 	http.ListenAndServe(":8080", nil)

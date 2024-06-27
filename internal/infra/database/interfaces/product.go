@@ -1,13 +1,13 @@
 package interfaces
 
 import (
-	"github.com/ViniciusSouzaDosReis/product-api/internal/entity/product"
+	"github.com/ViniciusSouzaDosReis/product-api/internal/entity"
 )
 
 type ProductInterface interface {
-	Create(product *product.Product) error
-	FindAll(page, limit int, sort string) ([]product.Product, error)
-	FindById(id string) (*product.Product, error)
+	Create(product *entity.Product) error
+	FindAll(page, limit int, sort string) ([]entity.Product, error)
+	FindById(id string) (*entity.Product, error)
 	Delete(id string) error
-	Update(product *product.Product) error
+	Update(product *entity.Product) error
 }

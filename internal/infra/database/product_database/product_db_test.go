@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/ViniciusSouzaDosReis/product-api/internal/entity/product"
+	"github.com/ViniciusSouzaDosReis/product-api/internal/entity"
 	"github.com/ViniciusSouzaDosReis/product-api/internal/infra/database/utils"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/sqlite"
@@ -14,15 +14,15 @@ import (
 var sqliteDialecto = sqlite.Open("file::memory:")
 
 func TestCreateProduct(t *testing.T) {
-	db, err := utils.CreateDBConnection(sqliteDialecto, &product.Product{})
+	db, err := utils.CreateDBConnection(sqliteDialecto, &entity.Product{})
 	assert.NoError(t, err)
-	newProduct, _ := product.NewProduct("Product 1", 10.0)
-	productDB := NewProduct(db)
+	newProduct, _ := entity.NewProduct("Product 1", 10.0)
+	productDB := NewProductDB(db)
 
 	err = productDB.Create(newProduct)
 	assert.Equal(t, nil, err)
 
-	var productFound product.Product
+	var productFound entity.Product
 	err = db.First(&productFound, "id = ?", newProduct.ID).Error
 	assert.Equal(t, nil, err)
 
@@ -31,16 +31,16 @@ func TestCreateProduct(t *testing.T) {
 }
 
 func TestFindAll(t *testing.T) {
-	db, err := utils.CreateDBConnection(sqliteDialecto, &product.Product{})
+	db, err := utils.CreateDBConnection(sqliteDialecto, &entity.Product{})
 	assert.NoError(t, err)
 
 	for i := 0; i < 24; i++ {
-		newProduct, err := product.NewProduct(fmt.Sprintf("Product %d", i), rand.Float64()*100)
+		newProduct, err := entity.NewProduct(fmt.Sprintf("Product %d", i), rand.Float64()*100)
 		assert.NoError(t, err)
 		db.Create(newProduct)
 	}
 
-	productDB := NewProduct(db)
+	productDB := NewProductDB(db)
 	products, err := productDB.FindAll(1, 10, "asc")
 	assert.NoError(t, err)
 	assert.Len(t, products, 10)
@@ -55,13 +55,13 @@ func TestFindAll(t *testing.T) {
 }
 
 func TestFindById(t *testing.T) {
-	db, err := utils.CreateDBConnection(sqliteDialecto, &product.Product{})
+	db, err := utils.CreateDBConnection(sqliteDialecto, &entity.Product{})
 	assert.NoError(t, err)
 
-	newProduct, _ := product.NewProduct("Product 1", 10.0)
+	newProduct, _ := entity.NewProduct("Product 1", 10.0)
 	db.Create(newProduct)
 
-	productDB := NewProduct(db)
+	productDB := NewProductDB(db)
 	productFound, err := productDB.FindById(newProduct.ID.String())
 	assert.NoError(t, err)
 
@@ -70,30 +70,30 @@ func TestFindById(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	db, err := utils.CreateDBConnection(sqliteDialecto, &product.Product{})
+	db, err := utils.CreateDBConnection(sqliteDialecto, &entity.Product{})
 	assert.NoError(t, err)
 
-	newProduct, _ := product.NewProduct("Product 1", 10.0)
+	newProduct, _ := entity.NewProduct("Product 1", 10.0)
 	db.Create(newProduct)
 
-	productDB := NewProduct(db)
+	productDB := NewProductDB(db)
 	err = productDB.Delete(newProduct.ID.String())
 	assert.NoError(t, err)
 
-	var foundProduct product.Product
+	var foundProduct entity.Product
 	err = db.First(&foundProduct, "id = ?", newProduct.ID.String()).Error
 	assert.Error(t, err)
 }
 
 func TestUpdate(t *testing.T) {
-	db, err := utils.CreateDBConnection(sqliteDialecto, &product.Product{})
+	db, err := utils.CreateDBConnection(sqliteDialecto, &entity.Product{})
 	assert.NoError(t, err)
 
-	newProduct, _ := product.NewProduct("Product 1", 10.0)
+	newProduct, _ := entity.NewProduct("Product 1", 10.0)
 	db.Create(newProduct)
 
-	productDB := NewProduct(db)
-	productToUpdate := product.Product{
+	productDB := NewProductDB(db)
+	productToUpdate := entity.Product{
 		ID:        newProduct.ID,
 		Name:      "Product 2",
 		Price:     110.0,
@@ -102,7 +102,7 @@ func TestUpdate(t *testing.T) {
 	err = productDB.Update(&productToUpdate)
 	assert.NoError(t, err)
 
-	var productFound product.Product
+	var productFound entity.Product
 	db.First(&productFound, "id = ?", productToUpdate.ID.String())
 	assert.Equal(t, productToUpdate.Name, productFound.Name)
 	assert.Equal(t, productToUpdate.Price, productFound.Price)

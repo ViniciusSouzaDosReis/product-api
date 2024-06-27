@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/ViniciusSouzaDosReis/product-api/internal/dto"
-	"github.com/ViniciusSouzaDosReis/product-api/internal/entity/product"
+	"github.com/ViniciusSouzaDosReis/product-api/internal/entity"
 	"github.com/ViniciusSouzaDosReis/product-api/internal/infra/database/interfaces"
 )
 
@@ -26,7 +26,7 @@ func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	p, err := product.NewProduct(dtoProduct.Name, dtoProduct.Price)
+	p, err := entity.NewProduct(dtoProduct.Name, dtoProduct.Price)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
