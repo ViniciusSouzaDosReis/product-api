@@ -7,6 +7,7 @@ import (
 	"github.com/ViniciusSouzaDosReis/product-api/internal/dto"
 	"github.com/ViniciusSouzaDosReis/product-api/internal/entity"
 	"github.com/ViniciusSouzaDosReis/product-api/internal/infra/database/interfaces"
+	"github.com/go-chi/chi/v5"
 )
 
 type ProductHandler struct {
@@ -37,4 +38,21 @@ func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
+}
+
+func (h *ProductHandler) FindProductById(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	if id == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	product, err := h.ProductDB.FindById(id)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(product)
 }
