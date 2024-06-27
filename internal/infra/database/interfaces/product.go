@@ -4,7 +4,7 @@ import (
 	"github.com/ViniciusSouzaDosReis/product-api/internal/entity/product"
 )
 
-type ProductInterfacce interface {
+type ProductInterface interface {
 	Create(product *product.Product) error
 	FindAll(page, limit int, sort string) ([]product.Product, error)
 	FindById(id string) (*product.Product, error)
