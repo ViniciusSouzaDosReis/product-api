@@ -5,3 +5,6 @@ Content-Type: application/json
   "name": "Product 2",
   "price": 100.0
 }
+
+###
+GET http://localhost:8080/product/9ddff103-26ca-4c7f-8c05-ead55e7f1851 
