@@ -9,11 +9,11 @@ type User struct {
 	DB *gorm.DB
 }
 
-func NewUser(db *gorm.DB) *User {
+func NewUserDB(db *gorm.DB) *User {
 	return &User{DB: db}
 }
 
-func (u *User) Create(user entity.User) error {
+func (u *User) Create(user *entity.User) error {
 	return u.DB.Create(user).Error
 }
 
