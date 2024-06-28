@@ -10,6 +10,7 @@ import (
 	"github.com/ViniciusSouzaDosReis/product-api/internal/webserver/handlers"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/jwtauth"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -27,12 +28,15 @@ func main() {
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
-
-	r.Post("/product", productHandler.CreateProduct)
-	r.Get("/product", productHandler.GetProducts)
-	r.Get("/product/{id}", productHandler.GetProductById)
-	r.Put("/product/{id}", productHandler.UpdateProduct)
-	r.Delete("/product/{id}", productHandler.DeleteProduct)
+	r.Route("/product", func(r chi.Router) {
+		r.Use(jwtauth.Verifier(configs.TokenAuth))
+		r.Use(jwtauth.Authenticator)
+		r.Post("/", productHandler.CreateProduct)
+		r.Get("/", productHandler.GetProducts)
+		r.Get("/{id}", productHandler.GetProductById)
+		r.Put("/{id}", productHandler.UpdateProduct)
+		r.Delete("/{id}", productHandler.DeleteProduct)
+	})
 
 	r.Post("/user", userHandler.CreateUser)
 	r.Post("/user/generate_token", userHandler.GenerateToken)
