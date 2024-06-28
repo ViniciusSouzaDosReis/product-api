@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	_, err := configs.LoadConfig(".")
+	configs, err := configs.LoadConfig(".")
 	checkErr(err)
 
 	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
@@ -23,7 +23,7 @@ func main() {
 	db.AutoMigrate(&entity.User{}, &entity.Product{})
 
 	productHandler := handlers.NewProductHandler(product_database.NewProductDB(db))
-	userHandler := handlers.NewUserHandler(user_database.NewUserDB(db))
+	userHandler := handlers.NewUserHandler(user_database.NewUserDB(db), configs.TokenAuth, configs.JWTExperesIn)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -35,6 +35,7 @@ func main() {
 	r.Delete("/product/{id}", productHandler.DeleteProduct)
 
 	r.Post("/user", userHandler.CreateUser)
+	r.Post("/user/generate_token", userHandler.GenerateToken)
 
 	http.ListenAndServe(":8080", r)
 }
