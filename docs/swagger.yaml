@@ -1,16 +1,295 @@
-basePath: /v2
-host: petstore.swagger.io
+basePath: /
+definitions:
+  dto.CreateProductInput:
+    properties:
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+  dto.CreateUserInpt:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.GenerateTokenInput:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.GenerateTokenOutput:
+    properties:
+      access_token:
+        type: string
+    type: object
+  entity.Product:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+  handlers.Error:
+    properties:
+      message:
+        type: string
+    type: object
+host: localhost:8080
 info:
   contact:
     email: support@swagger.io
     name: API Support
     url: http://www.swagger.io/support
-  description: This is a sample server Petstore server.
+  description: Product API with authentication
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
-  title: Swagger Example API
+  title: Go Expert API Example
   version: "1.0"
-paths: {}
+paths:
+  /product:
+    get:
+      consumes:
+      - application/json
+      description: Get Products
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: string
+      - description: Limit number
+        in: query
+        name: limit
+        type: string
+      - description: Sort page
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Product'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Products
+      tags:
+      - product
+    post:
+      consumes:
+      - application/json
+      description: Create product
+      parameters:
+      - description: product request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateProductInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Create product
+      tags:
+      - product
+  /product/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete product
+      parameters:
+      - description: Product ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Product'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete product
+      tags:
+      - product
+    get:
+      consumes:
+      - application/json
+      description: Get Product by id
+      parameters:
+      - description: Product ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Product'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Product by id
+      tags:
+      - product
+    put:
+      consumes:
+      - application/json
+      description: Update product
+      parameters:
+      - description: product request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Product'
+      - description: Product ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Product'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Update product
+      tags:
+      - product
+  /user:
+    post:
+      consumes:
+      - application/json
+      description: Create user
+      parameters:
+      - description: user request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateUserInpt'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      summary: Create user
+      tags:
+      - user
+  /user/generate_token:
+    post:
+      consumes:
+      - application/json
+      description: Generate Token
+      parameters:
+      - description: user credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.GenerateTokenInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GenerateTokenOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      summary: Generate Token
+      tags:
+      - user
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
